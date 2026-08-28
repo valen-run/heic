@@ -23,3 +23,7 @@ Thumbs.db
 # Test & coverage artifacts
 coverage/
 *.lcov
+
+# Planning & local scratch
+planning/
+.planning/
