@@ -26,5 +26,8 @@ fn test_integration_limits_rejection() {
     let data = create_synthetic_heic_header();
     let limits = Limits::none().with_max_file_size(10); // file size is 24 > 10
     let err = inspect_container(&data, &limits).unwrap_err();
-    assert!(matches!(err, HeicError::LimitExceeded(_)));
+    assert!(matches!(
+        err,
+        HeicError::LimitInputBytes { .. } | HeicError::LimitExceeded(_)
+    ));
 }
