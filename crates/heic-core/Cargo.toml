@@ -5,7 +5,7 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Core types, resource limits, and error models for @valen/heic"
+description = "Core types, resource limits, and error models for @valen-run/heic"
 
 [dependencies]
 thiserror.workspace = true

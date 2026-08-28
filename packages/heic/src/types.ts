@@ -1,5 +1,5 @@
 /**
- * Core type declarations for `@valen/heic`.
+ * Core type declarations for `@valen-run/heic`.
  */
 
 /**

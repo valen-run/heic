@@ -5,7 +5,7 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "ISO Base Media File Format (ISOBMFF) and HEIF container parser for @valen/heic"
+description = "ISO Base Media File Format (ISOBMFF) and HEIF container parser for @valen-run/heic"
 
 [dependencies]
 valen-heic-core.workspace = true

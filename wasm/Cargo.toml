@@ -5,7 +5,7 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "WebAssembly bindings layer for @valen/heic"
+description = "WebAssembly bindings layer for @valen-run/heic"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

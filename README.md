@@ -1,8 +1,8 @@
-# @valen/heic
+# @valen-run/heic
 
 > **Status: Active Development** — Phase 1 (Pure-Rust Engine) complete and verified. Phase 2 (WebAssembly & TypeScript Browser Adapter) is currently in active progress.
 
-`@valen/heic` is a zero-C-dependency, `#![forbid(unsafe_code)]` HEIC/HEIF decoding and conversion engine written in pure Rust and compiled to WebAssembly, paired with an ergonomic, high-level TypeScript API.
+`@valen-run/heic` is a zero-C-dependency, `#![forbid(unsafe_code)]` HEIC/HEIF decoding and conversion engine written in pure Rust and compiled to WebAssembly, paired with an ergonomic, high-level TypeScript API.
 
 Designed for production web applications requiring fast, client-side HEIC/HEIF detection, metadata extraction, intra-frame decoding, and direct encoding (JPEG, PNG, WebP) with strict resource limits and zero DOM `<canvas>` dependencies.
 
@@ -61,7 +61,7 @@ The Rust core is organized into 5 decoupled, single-responsibility crates adheri
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│               @valen/heic (TypeScript)                 │
+│             @valen-run/heic (TypeScript)               │
 │         API / Worker Orchestration / Type Model        │
 └───────────────────────────┬────────────────────────────┘
                             │
@@ -85,7 +85,7 @@ The Rust core is organized into 5 decoupled, single-responsibility crates adheri
 ## Target TypeScript Usage (Phase 2 Preview)
 
 ```typescript
-import { detect, inspect, convert, LimitsExceededError } from '@valen/heic';
+import { detect, inspect, convert, LimitsExceededError } from '@valen-run/heic';
 
 // 1. Fast container & brand detection
 const isHeic = await detect(file);

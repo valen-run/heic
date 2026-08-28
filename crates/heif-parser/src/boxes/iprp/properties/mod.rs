@@ -1,148 +1,16 @@
-//! Individual item property definitions (`ispe`, `irot`, `imir`, `colr`, `auxC`, `hvcC`).
+//! Individual item property definitions and `ipco` box parsing.
+
+pub mod color;
+pub mod hevc;
+pub mod spatial;
+
+pub use color::{AuxiliaryProperty, ColorProperty};
+pub use hevc::HevcConfigProperty;
+pub use spatial::{ImageSpatialExtents, MirrorProperty, RotationProperty};
 
 use crate::boxes::iprp::hvcc::parse_hvcc;
 use crate::boxes::{BoxHeader, BoxIter, FourCC, FullBoxHeader};
-use valen_heic_core::{ColorSpace, HeicError, HeicResult, ImageDimensions, Limits};
-
-/// Image spatial extents parsed from `ispe`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ImageSpatialExtents {
-    /// Display width in pixels.
-    pub width: u32,
-    /// Display height in pixels.
-    pub height: u32,
-}
-
-impl ImageSpatialExtents {
-    /// Converts extents to core [`ImageDimensions`].
-    pub const fn to_dimensions(&self) -> ImageDimensions {
-        ImageDimensions::new(self.width, self.height)
-    }
-}
-
-/// Image rotation parsed from `irot`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct RotationProperty {
-    /// Rotation angle in degrees CCW (0 = 0°, 1 = 90° CCW / 270° CW, 2 = 180°, 3 = 270° CCW / 90° CW).
-    pub angle_ccw: u8,
-}
-
-impl RotationProperty {
-    /// Returns rotation angle in degrees clockwise (0, 90, 180, 270).
-    pub const fn angle_cw(&self) -> u16 {
-        match self.angle_ccw & 3 {
-            0 => 0,
-            1 => 270,
-            2 => 180,
-            3 => 90,
-            _ => 0,
-        }
-    }
-
-    /// Converts to EXIF orientation tag if pure rotation (tag 1, 3, 6, 8).
-    pub const fn to_exif_orientation(&self) -> u8 {
-        match self.angle_ccw & 3 {
-            0 => 1, // Normal
-            1 => 8, // 270 CW
-            2 => 3, // 180
-            3 => 6, // 90 CW
-            _ => 1,
-        }
-    }
-}
-
-/// Image mirror parsed from `imir`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct MirrorProperty {
-    /// 0 = vertical axis (left-right flip), 1 = horizontal axis (top-bottom flip).
-    pub axis: u8,
-}
-
-/// Colour information parsed from `colr`.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ColorProperty {
-    /// NCLX colour profile description.
-    Nclx {
-        /// Colour primaries index.
-        colour_primaries: u16,
-        /// Transfer characteristics index.
-        transfer_characteristics: u16,
-        /// Matrix coefficients index.
-        matrix_coefficients: u16,
-        /// Full range video flag.
-        full_range_flag: bool,
-    },
-    /// Embedded raw ICC profile data (`rICC` or `prof`).
-    IccProfile(Vec<u8>),
-}
-
-impl ColorProperty {
-    /// Converts to core [`ColorSpace`].
-    pub fn to_color_space(&self) -> ColorSpace {
-        match self {
-            Self::Nclx {
-                colour_primaries, ..
-            } => match colour_primaries {
-                1 => ColorSpace::Srgb,
-                12 => ColorSpace::DisplayP3,
-                9 => ColorSpace::Rec2020,
-                _ => ColorSpace::Srgb,
-            },
-            Self::IccProfile(bytes) => ColorSpace::IccProfile(bytes.clone()),
-        }
-    }
-}
-
-/// Auxiliary image type parsed from `auxC`.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct AuxiliaryProperty {
-    /// URN identifier of auxiliary stream (e.g. `urn:mpeg:hevc:2015:auxid:1` for alpha channel).
-    pub aux_type: String,
-    /// Sub-type configuration data.
-    pub sub_type: Vec<u8>,
-}
-
-impl AuxiliaryProperty {
-    /// Returns `true` if this auxiliary property identifies an alpha transparency mask.
-    pub fn is_alpha(&self) -> bool {
-        self.aux_type == "urn:mpeg:hevc:2015:auxid:1"
-            || self.aux_type.ends_with(":auxid:1")
-            || self.aux_type.eq_ignore_ascii_case("alpha")
-    }
-}
-
-/// HEVC configuration record parsed from `hvcC`.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct HevcConfigProperty {
-    /// NAL unit length size in bytes (typically 4).
-    pub nalu_length_size: u8,
-    /// Sequence Parameter Sets (SPS).
-    pub sps: Vec<Vec<u8>>,
-    /// Picture Parameter Sets (PPS).
-    pub pps: Vec<Vec<u8>>,
-    /// Video Parameter Sets (VPS).
-    pub vps: Vec<Vec<u8>>,
-}
-
-impl HevcConfigProperty {
-    /// Formats all VPS, SPS, and PPS parameter sets into Annex-B start-code prefixed bitstream bytes.
-    pub fn to_annex_b_header(&self) -> Vec<u8> {
-        let mut out = Vec::new();
-        for vps in &self.vps {
-            out.extend_from_slice(&[0x00, 0x00, 0x00, 0x01]);
-            out.extend_from_slice(vps);
-        }
-        for sps in &self.sps {
-            out.extend_from_slice(&[0x00, 0x00, 0x00, 0x01]);
-            out.extend_from_slice(sps);
-        }
-        for pps in &self.pps {
-            out.extend_from_slice(&[0x00, 0x00, 0x00, 0x01]);
-            out.extend_from_slice(pps);
-        }
-        out
-    }
-}
+use valen_heic_core::{HeicError, HeicResult, Limits};
 
 /// Polymorphic item property representation.
 #[derive(Debug, Clone, PartialEq, Eq)]

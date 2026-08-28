@@ -1,12 +1,12 @@
 /**
- * Basic Node/TypeScript usage example for @valen/heic.
+ * Basic Node/TypeScript usage example for @valen-run/heic.
  */
 
 import * as fs from 'node:fs/promises';
-import { detect, inspect, LimitsExceededError } from '@valen/heic';
+import { detect, inspect, LimitsExceededError } from '@valen-run/heic';
 
 async function main() {
-  console.log('--- @valen/heic Basic Example ---');
+  console.log('--- @valen-run/heic Basic Example ---');
 
   // Synthetic sample header
   const sampleData = new Uint8Array([

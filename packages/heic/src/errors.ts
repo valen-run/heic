@@ -1,5 +1,5 @@
 /**
- * Unified error hierarchy for `@valen/heic`.
+ * Unified error hierarchy for `@valen-run/heic`.
  */
 
 export type HeicErrorCode =

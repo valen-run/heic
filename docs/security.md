@@ -2,7 +2,7 @@
 
 Processing untrusted image files uploaded by users presents significant security challenges, including decompression bombs, allocation panics, and parsing vulnerabilities.
 
-`@valen/heic` is built with a defensive security posture:
+`@valen-run/heic` is built with a defensive security posture:
 
 ## 1. WebAssembly Sandbox Isolation
 
@@ -30,7 +30,7 @@ Before allocating memory for pixel decoding, the parser extracts image header de
 
 ## 5. Security Vulnerability Reporting
 
-If you discover a potential security vulnerability in `@valen/heic`, please report it directly by emailing:
+If you discover a potential security vulnerability in `@valen-run/heic`, please report it directly by emailing:
 
 [**hi@valen.run**](mailto:hi@valen.run)
 

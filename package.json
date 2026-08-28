@@ -1,16 +1,16 @@
 {
   "name": "valen-heic-workspace",
   "private": true,
-  "description": "Monorepo workspace for @valen/heic",
+  "description": "Monorepo workspace for @valen-run/heic",
   "packageManager": "pnpm@11.24.0",
   "scripts": {
     "build:wasm": "wasm-pack build wasm --target web --out-dir ../packages/heic/pkg --release",
-    "build:js": "pnpm --filter @valen/heic build",
+    "build:js": "pnpm --filter @valen-run/heic build",
     "build": "pnpm build:js",
-    "typecheck": "pnpm --filter @valen/heic typecheck",
-    "lint:js": "pnpm --filter @valen/heic lint",
+    "typecheck": "pnpm --filter @valen-run/heic typecheck",
+    "lint:js": "pnpm --filter @valen-run/heic lint",
     "test:cargo": "cargo test --workspace",
-    "test:js": "pnpm --filter @valen/heic test",
+    "test:js": "pnpm --filter @valen-run/heic test",
     "test": "pnpm test:cargo && pnpm test:js",
     "fmt:cargo": "cargo fmt --all -- --check",
     "clippy": "cargo clippy --workspace --all-targets -- -D warnings"

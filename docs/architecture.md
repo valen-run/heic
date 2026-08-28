@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the architectural layout, crate boundaries, and design principles of `@valen/heic`.
+This document describes the architectural layout, crate boundaries, and design principles of `@valen-run/heic`.
 
 ## Guiding Principles
 
@@ -24,7 +24,7 @@ crates/
 wasm/                 WASM FFI interface utilizing wasm-bindgen
 
 packages/
-  heic/               TypeScript SDK distributed via npm (@valen/heic)
+  heic/               TypeScript SDK distributed via npm (@valen-run/heic)
 ```
 
 ---
@@ -74,7 +74,7 @@ graph TD
 - Serves as the FFI bridge between JavaScript and the Rust workspace.
 - Catches errors and serializes them into typed JavaScript error representations.
 
-### `@valen/heic` (TypeScript)
+### `@valen-run/heic` (TypeScript)
 - Provides ergonomic, idiomatic async APIs (`detect`, `inspect`, `convert`, `decode`).
 - Handles polymorphic browser inputs (`File`, `Blob`, `ArrayBuffer`, `Uint8Array`).
 - Provides worker orchestration for non-blocking UI operations.

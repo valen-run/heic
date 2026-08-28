@@ -1,6 +1,6 @@
-# Contributing to @valen/heic
+# Contributing to @valen-run/heic
 
-Thank you for your interest in contributing to `@valen/heic`!
+Thank you for your interest in contributing to `@valen-run/heic`!
 
 ## Code of Conduct
 

@@ -5,7 +5,7 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Decoder traits and HEVC/HEIC decoding pipeline abstraction for @valen/heic"
+description = "Decoder traits and HEVC/HEIC decoding pipeline abstraction for @valen-run/heic"
 
 [dependencies]
 valen-heic-core.workspace = true

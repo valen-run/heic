@@ -1,5 +1,5 @@
 {
-  "name": "@valen/heic",
+  "name": "@valen-run/heic",
   "version": "0.1.0",
   "description": "Production-grade browser HEIC/HEIF processing library powered by WebAssembly",
   "type": "module",

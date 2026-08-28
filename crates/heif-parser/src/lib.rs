@@ -4,6 +4,7 @@
 #![warn(missing_docs)]
 
 pub mod boxes;
+pub mod container;
 pub mod metadata;
 pub mod primary_image;
 
@@ -12,8 +13,8 @@ pub use boxes::{
     ItemLocation, ItemLocationBox, ItemPropertiesBox, ItemProperty, ItemReference,
     ItemReferenceBox, MetaBox,
 };
+pub use container::{HeifFile, ImageItem};
 pub use metadata::ContainerMetadata;
-pub use primary_image::{HeifFile, ImageItem};
 use valen_heic_core::{HeicError, HeicResult, Limits};
 
 /// Supported HEIF/HEIC brand identifiers.

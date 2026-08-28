@@ -2,7 +2,7 @@
 
 ## Reporting Security Issues
 
-If you discover a potential security vulnerability in `@valen/heic`, please report it by emailing:
+If you discover a potential security vulnerability in `@valen-run/heic`, please report it by emailing:
 
 [**hi@valen.run**](mailto:hi@valen.run)
 

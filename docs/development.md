@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide covers setting up your local environment for developing and testing `@valen/heic`.
+This guide covers setting up your local environment for developing and testing `@valen-run/heic`.
 
 ## Prerequisites
 

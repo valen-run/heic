@@ -1,11 +1,11 @@
 /**
- * Web Worker example for @valen/heic offloading heavy processing.
+ * Web Worker example for @valen-run/heic offloading heavy processing.
  */
 
-import { WorkerRequest, WorkerResponse } from '@valen/heic/worker';
+import { WorkerRequest, WorkerResponse } from '@valen-run/heic/worker';
 
 export function createHeicWorkerPool() {
-  const worker = new Worker(new URL('@valen/heic/worker', import.meta.url), {
+  const worker = new Worker(new URL('@valen-run/heic/worker', import.meta.url), {
     type: 'module',
   });
 

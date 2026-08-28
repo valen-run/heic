@@ -1,6 +1,6 @@
 # Browser Support
 
-`@valen/heic` is designed for broad compatibility with modern web browsers supporting WebAssembly.
+`@valen-run/heic` is designed for broad compatibility with modern web browsers supporting WebAssembly.
 
 ## Compatibility Matrix
 

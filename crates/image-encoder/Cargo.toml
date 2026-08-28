@@ -5,7 +5,7 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Target format encoders (JPEG, PNG, WebP) for @valen/heic"
+description = "Target format encoders (JPEG, PNG, WebP) for @valen-run/heic"
 
 [dependencies]
 valen-heic-core.workspace = true

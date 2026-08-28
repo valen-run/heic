@@ -1,5 +1,5 @@
 /**
- * @valen/heic - Production-grade browser HEIC/HEIF processing library.
+ * @valen-run/heic - Production-grade browser HEIC/HEIF processing library.
  */
 
 import {

@@ -1,4 +1,4 @@
-//! Core types, safety limit enforcement, and unified error models for @valen/heic.
+//! Core types, safety limit enforcement, and unified error models for @valen-run/heic.
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
