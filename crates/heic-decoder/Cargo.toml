@@ -1,0 +1,15 @@
+[package]
+name = "valen-heic-decoder"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Decoder traits and HEVC/HEIC decoding pipeline abstraction for @valen/heic"
+
+[dependencies]
+valen-heic-core.workspace = true
+valen-heif-parser.workspace = true
+valen-image-processing.workspace = true
+
+[dev-dependencies]

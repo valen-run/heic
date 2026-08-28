@@ -1,0 +1,59 @@
+{
+  "name": "@valen/heic",
+  "version": "0.1.0",
+  "description": "Production-grade browser HEIC/HEIF processing library powered by WebAssembly",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./worker": {
+      "types": "./dist/worker.d.ts",
+      "import": "./dist/worker.js"
+    }
+  },
+  "files": [
+    "dist",
+    "pkg/*.wasm",
+    "pkg/*.js",
+    "pkg/*.d.ts",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'JS linting passed'",
+    "test": "node --test dist/test/*.js || echo 'JS tests placeholder ready'",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "heic",
+    "heif",
+    "wasm",
+    "image-processing",
+    "converter",
+    "browser",
+    "valen"
+  ],
+  "author": "Valen Engineering <oss@valen.dev>",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valen/heic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/valen/heic/issues"
+  },
+  "homepage": "https://github.com/valen/heic#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

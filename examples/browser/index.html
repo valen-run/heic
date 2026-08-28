@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@valen/heic - Browser Example</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.5;
+    }
+    .dropzone {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 40px 20px;
+      text-align: center;
+      margin: 20px 0;
+      cursor: pointer;
+    }
+    pre {
+      background: #f4f4f5;
+      padding: 16px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>@valen/heic Browser Demo</h1>
+  <p>Select or drop a HEIC/HEIF file to inspect container metadata.</p>
+
+  <div class="dropzone" id="dropzone">
+    <input type="file" id="file-input" accept=".heic,.heif" style="display: none;">
+    <p>Click or drag a .heic/.heif file here</p>
+  </div>
+
+  <h3>Result</h3>
+  <pre id="output">No file selected.</pre>
+
+  <script type="module">
+    import { detect, inspect } from './dist/index.js';
+
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const output = document.getElementById('output');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      output.textContent = 'Analyzing file...';
+      const isHeic = await detect(file);
+      if (!isHeic) {
+        output.textContent = 'Error: Selected file is not a supported HEIC/HEIF container.';
+        return;
+      }
+
+      try {
+        const metadata = await inspect(file, {
+          maxFileSize: 25 * 1024 * 1024,
+        });
+        output.textContent = JSON.stringify(metadata, null, 2);
+      } catch (err) {
+        output.textContent = 'Error during inspection: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

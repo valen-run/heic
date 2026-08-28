@@ -1,0 +1,24 @@
+[package]
+name = "valen-heif-parser"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "ISO Base Media File Format (ISOBMFF) and HEIF container parser for @valen/heic"
+
+[dependencies]
+valen-heic-core.workspace = true
+
+[[test]]
+name = "integration_test"
+path = "../../tests/integration/core_pipeline_test.rs"
+
+[[test]]
+name = "regression_test"
+path = "../../tests/regression/regression_test.rs"
+
+[[bench]]
+name = "parser_bench"
+path = "../../benches/parser_bench.rs"
+harness = false

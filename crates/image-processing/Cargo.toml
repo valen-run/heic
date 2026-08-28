@@ -1,0 +1,13 @@
+[package]
+name = "valen-image-processing"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Pixel buffer manipulation, orientation transforms, and color processing for @valen/heic"
+
+[dependencies]
+valen-heic-core.workspace = true
+
+[dev-dependencies]

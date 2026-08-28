@@ -1,0 +1,23 @@
+[package]
+name = "valen-heic-wasm"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "WebAssembly bindings layer for @valen/heic"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen.workspace = true
+js-sys.workspace = true
+web-sys.workspace = true
+valen-heic-core.workspace = true
+valen-heif-parser.workspace = true
+valen-heic-decoder.workspace = true
+valen-image-processing.workspace = true
+valen-image-encoder.workspace = true
+
+[dev-dependencies]

@@ -1,0 +1,13 @@
+[package]
+name = "valen-heic-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Core types, resource limits, and error models for @valen/heic"
+
+[dependencies]
+thiserror.workspace = true
+
+[dev-dependencies]

@@ -1,0 +1,14 @@
+[package]
+name = "valen-image-encoder"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Target format encoders (JPEG, PNG, WebP) for @valen/heic"
+
+[dependencies]
+valen-heic-core.workspace = true
+valen-image-processing.workspace = true
+
+[dev-dependencies]
