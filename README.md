@@ -1,63 +1,63 @@
 # @valen/heic
 
-> **Status: Active Development** — This project is currently under active development. Core architectural interfaces and bindings are established; full HEIC/HEVC decoding is in development and not yet production-ready.
+> **Status: Active Development** — Phase 1 (Pure-Rust Engine) complete and verified. Phase 2 (WebAssembly & TypeScript Browser Adapter) is currently in active progress.
 
-`@valen/heic` is a high-performance, memory-safe browser HEIC/HEIF image processing library written in Rust and compiled to WebAssembly, with an ergonomic TypeScript API.
+`@valen/heic` is a zero-C-dependency, `#![forbid(unsafe_code)]` HEIC/HEIF decoding and conversion engine written in pure Rust and compiled to WebAssembly, paired with an ergonomic, high-level TypeScript API.
 
-Designed for robust web applications that require fast, client-side HEIC/HEIF detection, metadata inspection, decoding, and conversion (JPEG, PNG, WebP) with strict resource limits and predictable memory consumption.
-
----
-
-## Features (Planned & Under Development)
-
-- **Browser-First WebAssembly Engine**: Core parsing and processing compiled to compact, fast WebAssembly.
-- **Strict Resource Safety**: Configurable safety limits on file sizes, image dimensions, pixel counts, and memory allocations prior to decoding.
-- **Rich Format Detection & Inspection**: Fast metadata inspection (EXIF, color profiles, dimensions) without decoding full bitstreams.
-- **Zero Raw Crashes / Safe Error Model**: Structured, typed errors shared cleanly across the WASM boundary.
-- **Web Worker Ready**: First-class support for offloading decoding from the main UI thread.
-- **Modern JavaScript/TypeScript Support**: Native input handling for `File`, `Blob`, `ArrayBuffer`, and `Uint8Array`.
+Designed for production web applications requiring fast, client-side HEIC/HEIF detection, metadata extraction, intra-frame decoding, and direct encoding (JPEG, PNG, WebP) with strict resource limits and zero DOM `<canvas>` dependencies.
 
 ---
 
-## Intended Usage
+## Development Status & Roadmap
 
-```typescript
-import { detect, inspect, convert, LimitsExceededError } from '@valen/heic';
+| Phase | Description | Status |
+| :--- | :--- | :--- |
+| **Phase 1: Rust Core Engine** | Pure-Rust ISO-BMFF parser, HEVC intra decoder, grid assembly, EXIF orientation, JPEG/PNG/WebP encoders, safety limits. | **COMPLETED** (50 tests passing) |
+| **Phase 2: WASM & TypeScript** | `wasm-bindgen` interface, TypeScript browser adapter, Web Worker orchestration, streaming WASM loader. | **IN PROGRESS** |
+| **Phase 3: QA & CI/CD** | Test corpus, Playwright cross-browser/CSP suite, fuzzing, WASM size optimization, GitHub Actions CI/CD. | **PLANNED** |
 
-// Fast container & brand detection
-const isHeic = await detect(file);
+---
 
-// Metadata inspection without decoding the image
-const metadata = await inspect(file);
-console.log(`Dimensions: ${metadata.width}x${metadata.height}`);
+## Workspace Crates
 
-// Convert HEIC to JPEG with safety limits and cancellation support
-const controller = new AbortController();
+The Rust core is organized into 5 decoupled, single-responsibility crates adhering to `#![forbid(unsafe_code)]`:
 
-try {
-  const outputBlob = await convert(file, {
-    format: 'jpeg',
-    quality: 0.85,
-    limits: {
-      maxFileSize: 50 * 1024 * 1024, // 50 MB
-      maxWidth: 8192,
-      maxHeight: 8192,
-      maxPixelCount: 67_108_864,     // 64 MP
-    },
-    signal: controller.signal,
-  });
-} catch (err) {
-  if (err instanceof LimitsExceededError) {
-    console.error('Image exceeds allowable dimensions or size', err);
-  }
-}
-```
+| Crate | Description | Status |
+| :--- | :--- | :--- |
+| [`valen-heic-core`](crates/heic-core) | Core types (`ImageDimensions`, `PixelFormat`, `Orientation`, `ColorSpace`), structured error models, and defensive resource limits (`Limits`). | Done |
+| [`valen-heif-parser`](crates/heif-parser) | Defensive ISO-BMFF / HEIF demuxer (`ftyp`, `meta`, `iloc`, `iinf`, `iprp`, `iref`, `grid`), metadata extraction, and Annex-B stream translation. | Done |
+| [`valen-heic-decoder`](crates/heic-decoder) | Pure-Rust HEVC intra bitstream decoder (Exp-Golomb reader, CABAC engine, 35 intra modes, 4x4 DST-VII / DCT-II transforms, deblocking, SAO). | Done |
+| [`valen-image-processing`](crates/image-processing) | `PixelBuffer` layout, multi-tile grid assembly with boundary cropping, 8 EXIF orientation transformations, and alpha compositing. | Done |
+| [`valen-image-encoder`](crates/image-encoder) | In-WASM target encoders: Baseline Sequential DCT JPEG (with JFIF & byte stuffing), ISO PNG (Deflate/Zlib), and Lossless WebP (VP8L). | Done |
+| [`valen-heic-wasm`](wasm) | Safe WebAssembly bindings and zero-copy memory buffer exchange via `wasm-bindgen`. | In Progress |
+
+---
+
+## Implemented Core Capabilities (Phase 1)
+
+- **Pure-Rust Safety**: Entire decoding pipeline is 100% pure safe Rust (`#![forbid(unsafe_code)]`). No C/C++ libraries (no `libde265`, `libheif`), zero memory vulnerabilities.
+- **Defensive Resource Limits**: Strict validation against decompression bombs and excessive allocations (`Limits::default_browser()`) on file size, dimensions, pixel count, decoded buffer memory, and tile counts.
+- **ISO-BMFF Demuxer & Metadata**: Instant detection (`is_heif_or_heic`) and inspection (`inspect_container`) extracting dimensions, color spaces, EXIF orientation, and alpha masks without full bitstream decoding.
+- **HEVC Intra Bitstream Decoding**:
+  - Safe bitstream reader with $ue(v)$ and $se(v)$ Exp-Golomb decoding.
+  - Full parameter set parsing (`VPS`, `SPS`, `PPS`, `SliceHeader`).
+  - Arithmetic CABAC entropy decoder with state renormalization and bypass decoding.
+  - 35 Intra Prediction modes (Planar, DC, Angular 2..=34) with 32-step sub-pel interpolation and 3-tap reference smoothing.
+  - Inverse quantization with $QP \pmod 6$ scaling factors, 4x4 DST-VII, and partial butterfly DCT-II (4x4, 8x8, 16x16, 32x32).
+  - In-loop deblocking filter and Sample Adaptive Offset (SAO).
+  - CTU quadtree recursive descent and fixed-point YUV420 to RGB planar reconstruction.
+- **Multi-Tile Grid & Transformations**:
+  - ISO/IEC 23008-12 multi-tile row-major grid assembly with edge cropping.
+  - 8 EXIF orientation transformations (rotations & reflections).
+  - Alpha channel compositing and solid background color blending ($C_{out} = \frac{C \cdot \alpha + BG \cdot (255 - \alpha) + 127}{255}$).
+- **In-WASM Direct Image Encoders**:
+  - **JPEG**: Baseline Sequential DCT with quality scaling (1–100), 2D forward DCT, standard Annex K Huffman coding with `0xFF` byte stuffing, and JFIF header generation.
+  - **PNG**: ISO/IEC 15948 compliant encoder with pure-Rust Deflate/Zlib container stream, scanline filtering, and CRC-32 / Adler-32 checksums.
+  - **WebP**: Lossless VP8L bitstream encoding inside RIFF containers.
 
 ---
 
 ## Architecture Overview
-
-The repository is organized as a modular Rust workspace decoupled from the WebAssembly bindings and TypeScript package:
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -74,49 +74,81 @@ The repository is organized as a modular Rust workspace decoupled from the WebAs
 │                    Rust Core Workspace                 │
 │  ├── heic-core          (types, errors, limits)        │
 │  ├── heif-parser        (ISOBMFF box parser, metadata) │
-│  ├── heic-decoder       (HEVC/HEIC decoding pipeline)  │
-│  ├── image-processing   (EXIF orientation, color, buf) │
+│  ├── heic-decoder       (HEVC intra bitstream decoder) │
+│  ├── image-processing   (grid, EXIF orientation, color)│
 │  └── image-encoder      (JPEG, PNG, WebP encoders)     │
 └────────────────────────────────────────────────────────┘
 ```
 
-See [docs/architecture.md](docs/architecture.md) for full details.
+---
+
+## Target TypeScript Usage (Phase 2 Preview)
+
+```typescript
+import { detect, inspect, convert, LimitsExceededError } from '@valen/heic';
+
+// 1. Fast container & brand detection
+const isHeic = await detect(file);
+
+// 2. Metadata inspection without decoding bitstream
+const metadata = await inspect(file);
+console.log(`Dimensions: ${metadata.width}x${metadata.height}`);
+console.log(`Color Space: ${metadata.colorSpace}, Has Alpha: ${metadata.hasAlpha}`);
+
+// 3. Convert HEIC to JPEG/PNG/WebP with defensive safety limits
+const controller = new AbortController();
+
+try {
+  const outputBlob = await convert(file, {
+    format: 'jpeg',
+    quality: 0.85,
+    limits: {
+      maxFileSize: 50 * 1024 * 1024, // 50 MB
+      maxWidth: 8192,
+      maxHeight: 8192,
+      maxPixelCount: 67_108_864,     // 64 MP
+      maxMemoryBytes: 256 * 1024 * 1024,
+    },
+    signal: controller.signal,
+  });
+} catch (err) {
+  if (err instanceof LimitsExceededError) {
+    console.error('Image exceeds allowable dimensions or memory limits', err);
+  }
+}
+```
 
 ---
 
 ## Development Setup
 
 ### Prerequisites
-- **Rust toolchain** (1.75+ recommended): `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
-- **wasm32 target**: `rustup target add wasm32-unknown-unknown`
-- **wasm-pack** (optional for local package packaging): `cargo install wasm-pack`
+- **Rust Toolchain** (1.75+): `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+- **WASM Target**: `rustup target add wasm32-unknown-unknown`
 - **Node.js** (v18+) & **pnpm** (v9+)
 
 ### Building and Testing
 
 ```bash
-# Build all Rust crates
+# Build all Rust workspace crates
 cargo build --workspace
 
-# Run Rust unit and integration tests
+# Run all 50+ unit and integration tests
 cargo test --workspace
 
-# Run Rust formatting & linter checks
+# Run formatting & clippy linters (0 warnings enforced)
 cargo fmt --all -- --check
-cargo clippy --workspace --all-targets -- -D warnings
-
-# Run TypeScript type check
-pnpm run typecheck
+cargo clippy --workspace --all-targets --all-features -- -D warnings
 ```
 
 ---
 
-## Documentation
+## Planning & Documentation
 
+- [Project Build Plan & Execution Tasks](planning/task.md)
 - [Architecture Guide](docs/architecture.md)
-- [Browser Compatibility Matrix](docs/browser-support.md)
-- [Security & Resource Safety](docs/security.md)
-- [Development & Contribution](docs/development.md)
+- [Safety & Resource Limits Policy](planning/v2-upgrades.md)
+- [Security Model](docs/security.md)
 
 ---
 

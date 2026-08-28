@@ -22,6 +22,9 @@ pub const SUPPORTED_BRANDS: &[[u8; 4]] = &[
 ];
 
 /// Quickly detects whether the input byte stream is a valid HEIF/HEIC container.
+///
+/// Returns `true` if and only if the buffer begins with a valid `ftyp` box
+/// that specifies a supported HEIF/HEIC brand.
 pub fn is_heif_or_heic(input: &[u8]) -> bool {
     if input.len() < 12 {
         return false;
@@ -36,9 +39,7 @@ pub fn is_heif_or_heic(input: &[u8]) -> bool {
     }
 
     let Ok(ftyp) = FileTypeBox::parse(input) else {
-        // Basic check if ftyp box payload is partially truncated
-        let major_brand = [input[8], input[9], input[10], input[11]];
-        return SUPPORTED_BRANDS.contains(&major_brand);
+        return false;
     };
 
     ftyp.is_compatible(SUPPORTED_BRANDS)
@@ -88,13 +89,14 @@ pub fn parse_heif(input: &[u8], limits: &Limits) -> HeicResult<HeifFile> {
     })?;
 
     let iprp = meta.iprp.clone().or(root_iprp).unwrap_or_default();
-
     let iref = meta.iref.clone().or(root_iref).unwrap_or_default();
 
     HeifFile::build(ftyp, meta, iprp, iref, input, limits)
 }
 
 /// Inspects container metadata and validates limits before bitstream decoding.
+///
+/// Returns structured errors if the container is truncated, malformed, or missing required metadata.
 pub fn inspect_container(input: &[u8], limits: &Limits) -> HeicResult<ContainerMetadata> {
     limits.check_file_size(input.len() as u64)?;
 
@@ -104,43 +106,8 @@ pub fn inspect_container(input: &[u8], limits: &Limits) -> HeicResult<ContainerM
         ));
     }
 
-    // Attempt full parse first
-    if let Ok(heif) = parse_heif(input, limits) {
-        return Ok(heif.get_metadata());
-    }
-
-    // Fallback: extract ftyp if full meta was not found or synthetic
-    let header = BoxHeader::parse(input)?;
-    let major_brand = [input[8], input[9], input[10], input[11]];
-    let mut compatible_brands = Vec::new();
-
-    let mut offset = 16;
-    let end = (header.size as usize).min(input.len());
-    while offset + 4 <= end {
-        compatible_brands.push([
-            input[offset],
-            input[offset + 1],
-            input[offset + 2],
-            input[offset + 3],
-        ]);
-        offset += 4;
-    }
-
-    Ok(ContainerMetadata {
-        major_brand,
-        compatible_brands,
-        dimensions: valen_heic_core::ImageDimensions::new(0, 0),
-        color_space: valen_heic_core::ColorSpace::Srgb,
-        orientation: None,
-        primary_item_id: None,
-        image_count: 1,
-        is_grid: false,
-        grid_rows: 0,
-        grid_columns: 0,
-        has_alpha: false,
-        alpha_item_id: None,
-        exif_item_id: None,
-    })
+    let heif = parse_heif(input, limits)?;
+    Ok(heif.get_metadata())
 }
 
 #[cfg(test)]
@@ -160,5 +127,16 @@ mod tests {
     fn test_is_heif_or_heic_invalid() {
         assert!(!is_heif_or_heic(&[]));
         assert!(!is_heif_or_heic(b"random_data_here"));
+    }
+
+    #[test]
+    fn test_is_heif_or_heic_truncated_ftyp_rejected() {
+        // Only 10 bytes -> less than 12
+        assert!(!is_heif_or_heic(&[
+            0, 0, 0, 16, b'f', b't', b'y', b'p', b'h', b'e'
+        ]));
+        // 12 bytes but ftyp length field says 24 -> truncated payload, FileTypeBox::parse fails
+        let truncated = vec![0, 0, 0, 24, b'f', b't', b'y', b'p', b'h', b'e', b'i', b'c'];
+        assert!(!is_heif_or_heic(&truncated));
     }
 }
