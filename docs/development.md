@@ -52,3 +52,10 @@ pnpm run test:js
 cd packages/heic
 pnpm pack --dry-run
 ```
+
+---
+
+## Questions & Support
+
+For developer inquiries, questions, or contribution feedback, please contact [**hi@valen.run**](mailto:hi@valen.run).
+

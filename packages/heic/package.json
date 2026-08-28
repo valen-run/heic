@@ -40,16 +40,16 @@
     "browser",
     "valen"
   ],
-  "author": "Valen Engineering <oss@valen.dev>",
+  "author": "Valen Engineering <hi@valen.run>",
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/valen/heic.git"
+    "url": "https://github.com/valen-run/heic.git"
   },
   "bugs": {
-    "url": "https://github.com/valen/heic/issues"
+    "url": "https://github.com/valen-run/heic/issues"
   },
-  "homepage": "https://github.com/valen/heic#readme",
+  "homepage": "https://github.com/valen-run/heic#readme",
   "engines": {
     "node": ">=18.0.0"
   },

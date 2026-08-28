@@ -4,7 +4,7 @@
 
 If you discover a potential security vulnerability in `@valen/heic`, please report it by emailing:
 
-**security@valen.dev**
+[**hi@valen.run**](mailto:hi@valen.run)
 
 Please do NOT file public GitHub issues for security vulnerabilities.
 

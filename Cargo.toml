@@ -8,9 +8,9 @@ members = [
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-authors = ["Valen Engineering <oss@valen.dev>"]
+authors = ["Valen Engineering <hi@valen.run>"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/valen/heic"
+repository = "https://github.com/valen-run/heic"
 readme = "README.md"
 
 [workspace.dependencies]

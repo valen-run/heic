@@ -25,5 +25,12 @@ Before allocating memory for pixel decoding, the parser extracts image header de
 - Errors are returned as `Result<T, HeicError>` instead of panicking.
 
 ## 4. Fuzzing & Regression Testing
-
+ 
 - The `tests/fixtures/` and `tests/regression/` test suites contain anonymized test cases to catch edge cases, truncated streams, and malformed container structures.
+
+## 5. Security Vulnerability Reporting
+
+If you discover a potential security vulnerability in `@valen/heic`, please report it directly by emailing:
+
+[**hi@valen.run**](mailto:hi@valen.run)
+
