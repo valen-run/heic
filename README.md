@@ -143,15 +143,6 @@ cargo clippy --workspace --all-targets --all-features -- -D warnings
 
 ---
 
-## Planning & Documentation
-
-- [Project Build Plan & Execution Tasks](planning/task.md)
-- [Architecture Guide](docs/architecture.md)
-- [Safety & Resource Limits Policy](planning/v2-upgrades.md)
-- [Security Model](docs/security.md)
-
----
-
 ## License
 
 Dual-licensed under either:
