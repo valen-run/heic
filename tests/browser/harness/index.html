@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>@valen-run/heic Browser Harness</title>
+</head>
+<body>
+  <h1>@valen-run/heic Browser Harness</h1>
+  <canvas id="test-canvas" width="300" height="300"></canvas>
+
+  <script type="module">
+    import * as heic from '/dist/index.js';
+    import * as worker from '/dist/worker.js';
+
+    window.__valen_heic = {
+      ...heic,
+      ...worker,
+      ready: true,
+      createWorkerConverter: (options) => {
+        return new worker.WorkerConverter('/dist/worker.js', options?.timeoutMs);
+      }
+    };
+
+    window.dispatchEvent(new CustomEvent('valen-heic-ready'));
+  </script>
+</body>
+</html>

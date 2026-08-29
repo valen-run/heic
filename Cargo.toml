@@ -25,6 +25,7 @@ valen-heif-parser = { path = "crates/heif-parser", version = "0.1.0" }
 valen-heic-decoder = { path = "crates/heic-decoder", version = "0.1.0" }
 valen-image-processing = { path = "crates/image-processing", version = "0.1.0" }
 valen-image-encoder = { path = "crates/image-encoder", version = "0.1.0" }
+valen-heic-wasm = { path = "wasm", version = "0.1.0" }
 
 [profile.release]
 opt-level = 3

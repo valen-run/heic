@@ -96,6 +96,10 @@ impl HeifFile {
                 }
             }
 
+            if dims.width > 0 && dims.height > 0 {
+                limits.check_dimensions(dims)?;
+            }
+
             let orientation = iprp
                 .get_rotation_for_item(id)
                 .map(|r| r.to_exif_orientation());
@@ -104,6 +108,30 @@ impl HeifFile {
                 .get_color_for_item(id)
                 .map(|c| c.to_color_space())
                 .unwrap_or(ColorSpace::Srgb);
+
+            if let Some(loc) = meta.iloc.items.get(&id) {
+                if loc.construction_method
+                    == crate::boxes::meta::iloc::ConstructionMethod::FileOffset
+                {
+                    for extent in &loc.extents {
+                        let start = usize::try_from(loc.base_offset.saturating_add(extent.offset))
+                            .map_err(|_| {
+                                HeicError::LimitExceeded("Extent offset exceeds usize".into())
+                            })?;
+                        let len = usize::try_from(extent.length).map_err(|_| {
+                            HeicError::LimitExceeded("Extent length exceeds usize".into())
+                        })?;
+                        if start.saturating_add(len) > file_bytes.len() {
+                            return Err(HeicError::MalformedInput(format!(
+                                "Extent [{}..{}] exceeds file length {}",
+                                start,
+                                start.saturating_add(len),
+                                file_bytes.len()
+                            )));
+                        }
+                    }
+                }
+            }
 
             let length = meta
                 .iloc

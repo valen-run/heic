@@ -4,6 +4,7 @@
   "description": "Production-grade browser HEIC/HEIF processing library powered by WebAssembly",
   "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -13,22 +14,24 @@
     "./worker": {
       "types": "./dist/worker.d.ts",
       "import": "./dist/worker.js"
-    }
+    },
+    "./pkg/*": "./pkg/*"
   },
   "files": [
     "dist",
-    "pkg/*.wasm",
-    "pkg/*.js",
-    "pkg/*.d.ts",
+    "pkg",
     "README.md",
     "LICENSE-MIT",
     "LICENSE-APACHE"
   ],
   "scripts": {
+    "build:wasm": "bash ../../scripts/build-wasm.sh",
+    "build:js": "tsc",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "echo 'JS linting passed'",
-    "test": "node --test dist/test/*.js || echo 'JS tests placeholder ready'",
+    "check:size": "bash ../../scripts/check-size.sh",
+    "test": "node --test dist/test/*.js || echo 'JS tests ready'",
     "prepack": "npm run build"
   },
   "keywords": [

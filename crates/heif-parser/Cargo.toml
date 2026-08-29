@@ -10,8 +10,14 @@ description = "ISO Base Media File Format (ISOBMFF) and HEIF container parser fo
 [dependencies]
 valen-heic-core.workspace = true
 
+[dev-dependencies]
+valen-heic-decoder.workspace = true
+valen-image-processing.workspace = true
+valen-image-encoder.workspace = true
+valen-heic-wasm.workspace = true
+
 [[test]]
-name = "integration_test"
+name = "core_pipeline_test"
 path = "../../tests/integration/core_pipeline_test.rs"
 
 [[test]]

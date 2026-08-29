@@ -1,0 +1,47 @@
+[package]
+name = "valen-heic-fuzz"
+version = "0.1.0"
+publish = false
+edition = "2021"
+authors = ["Valen Engineering <hi@valen.run>"]
+license = "MIT OR Apache-2.0"
+
+[package.metadata]
+cargo-fuzz = true
+
+[workspace]
+
+[dependencies]
+libfuzzer-sys = "0.4.9"
+valen-heic-core = { path = "../crates/heic-core" }
+valen-heif-parser = { path = "../crates/heif-parser" }
+valen-heic-decoder = { path = "../crates/heic-decoder" }
+valen-image-processing = { path = "../crates/image-processing" }
+valen-image-encoder = { path = "../crates/image-encoder" }
+valen-heic-wasm = { path = "../wasm" }
+
+# Prevent libfuzzer-sys from being optimized away
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "fuzz_is_heif"
+path = "fuzz_targets/fuzz_is_heif.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_container_parser"
+path = "fuzz_targets/fuzz_container_parser.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_decode_with_limits"
+path = "fuzz_targets/fuzz_decode_with_limits.rs"
+test = false
+doc = false
+
+[[test]]
+name = "generate_seeds"
+path = "seeds.rs"
