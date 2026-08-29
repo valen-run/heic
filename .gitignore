@@ -27,3 +27,5 @@ coverage/
 # Planning & local scratch
 planning/
 .planning/
+.qwen/
+.gemini/
