@@ -63,6 +63,13 @@ jobs:
       - name: Verify WASM Size Budget
         run: bash scripts/check-size.sh
 
+      - name: Upload WASM Package Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-pkg
+          path: packages/heic/pkg/
+          if-no-files-found: error
+
   browser-tests:
     name: Playwright Cross-Browser Tests
     runs-on: ubuntu-latest
@@ -70,6 +77,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Download WASM Package Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: wasm-pkg
+          path: packages/heic/pkg/
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -87,10 +100,10 @@ jobs:
         run: pnpm run build:js
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: npx --yes playwright install --with-deps chromium firefox webkit
 
       - name: Run Playwright Test Suite
-        run: pnpm test:browser
+        run: npx playwright test -c tests/browser/playwright.config.ts
 
   security-audit:
     name: Security & License Audit

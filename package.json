@@ -12,7 +12,7 @@
     "lint:js": "pnpm --filter @valen-run/heic lint",
     "test:cargo": "cargo test --workspace",
     "test:js": "pnpm --filter @valen-run/heic test",
-    "test:browser": "playwright test -c tests/browser/playwright.config.ts",
+    "test:browser": "npx playwright test -c tests/browser/playwright.config.ts",
     "test": "pnpm test:cargo && pnpm test:js",
     "fmt:cargo": "cargo fmt --all -- --check",
     "clippy": "cargo clippy --workspace --all-targets -- -D warnings",
